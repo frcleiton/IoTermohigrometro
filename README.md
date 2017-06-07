@@ -1,4 +1,4 @@
-## IntroduÁ„o
+## Introdu√ß√£o
 Respberry PI web server com sensor de temperatura e humidade DHT22.
 
 Tecnologias
@@ -7,10 +7,10 @@ Tecnologias
 - Nginx web server
 - Sensor de humidade e temperatura DHT22
 - Banco de dados Sqlite para armazenamento das leituras
-- Cronjob para agendamento das leituras
-- RepresentaÁ„o em Grafico utilizando a API Google Chart
-- ParametrizaÁ„o dos par‚metros de alerta
+- Cronjob para agendamento das medi√ß√µes
+- Representa√ß√£o em Grafico utilizando a API Google Chart
+- Parametriza√ß√£o dos valores de alerta
 - TODO: Alerta por e-mail para temperatura e humidade fora dos parametros.
-- TODO: Alerta na p·gina para temperatura e humidade fora dos parametros.
+- TODO: Alerta na p√°gina para temperatura e humidade fora dos parametros.
 
 
