@@ -26,8 +26,9 @@ def lab_temp():
         humidity = random.randint(1,100)
         temperature = random.randint(10,30)
     rmin, rmax = get_parametros()
+    print type(rmin)
     if humidity is not None and temperature is not None:
-        return render_template("lab_temp.html",temp=temperature,hum=humidity,equipname=equipamento,equipsite=local,min=rmin,max=rmax)
+        return render_template("lab_temp.html",temp=temperature,hum=humidity,equipname=equipamento,equipsite=local,min=rmin[0],max=rmax[0])
     else:
         return render_template("no_sensor.html")
 
@@ -124,7 +125,10 @@ def lab_parametros():
     if request.method == 'POST':
         set_min = request.form['temp_min']
         curs2.execute('UPDATE parametros SET valor = %d where parametro = %s' % (int(set_min),"'LIMITE_MIN_TEMP'"))
+        set_max = request.form['temp_max']
+        curs2.execute('UPDATE parametros SET valor = %d where parametro = %s' % (int(set_max),"'LIMITE_MAX_TEMP'"))
         conn2.commit()
+        conn2.close()
         return redirect('/lab_parametros')
 
 def validate_date(d):
