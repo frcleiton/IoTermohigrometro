@@ -26,7 +26,9 @@ def lab_temp():
         humidity = random.randint(1,100)
         temperature = random.randint(10,30)
     if humidity is not None and temperature is not None:
-        return render_template("lab_temp.html",temp=temperature,hum=humidity,equipname=equipamento,equipsite=local)
+        alerta_temp = get_alert(temperature)
+        print alerta_temp
+        return render_template("lab_temp.html",temp=temperature,hum=humidity,equipname=equipamento,equipsite=local,alerta=alerta_temp)
     else:
         return render_template("no_sensor.html")
 
@@ -133,6 +135,20 @@ def validate_date(d):
         return True
     except ValueError:
         return False
+
+def get_alert(temperature):
+    conn=sqlite3.connect('lab_app.db')
+    curs=conn.cursor()
+    curs.execute("SELECT valor FROM parametros WHERE parametro = 'LIMITE_MIN_TEMP'");
+    result_min = curs.fetchone()
+    curs.execute("SELECT valor FROM parametros WHERE parametro = 'LIMITE_MAX_TEMP'");
+    result_max = curs.fetchone()
+    conn.close()
+    if (temperature < result_min) or (temperature > result_max):
+        return True
+    else:
+        return False
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)

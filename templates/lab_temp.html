@@ -42,12 +42,14 @@
   </body> 
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js" ></script>
-<!-- <script>
+<script>
+      resultado = {{alerta}}
+      alert('resulta:')
       if (alerta) {
         var temp_atual = document.getElementById('atual_temp').value ;
         alert('Alerta de temperatura: ' + temp_atual);
       }
-</script> -->
+</script>
 <script>
 jQuery( document ).ready(function() {
     timezone = jstz.determine();
