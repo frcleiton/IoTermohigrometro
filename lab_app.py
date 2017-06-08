@@ -25,10 +25,9 @@ def lab_temp():
         import random
         humidity = random.randint(1,100)
         temperature = random.randint(10,30)
+    rmin, rmax = get_parametros()
     if humidity is not None and temperature is not None:
-        alerta_temp = get_alert(temperature)
-        print alerta_temp
-        return render_template("lab_temp.html",temp=temperature,hum=humidity,equipname=equipamento,equipsite=local,alerta=alerta_temp)
+        return render_template("lab_temp.html",temp=temperature,hum=humidity,equipname=equipamento,equipsite=local,min=rmin,max=rmax)
     else:
         return render_template("no_sensor.html")
 
@@ -108,7 +107,6 @@ def get_records():
 	curs.execute("SELECT * FROM humidities WHERE rDateTime BETWEEN ? AND ?", (from_date_utc.format('YYYY-MM-DD HH:mm'), to_date_utc.format('YYYY-MM-DD HH:mm')))
 	humidities 	= curs.fetchall()
 	conn.close()
-
 	return [temperatures, humidities, timezone, from_date_str, to_date_str]
 
 
@@ -136,7 +134,7 @@ def validate_date(d):
     except ValueError:
         return False
 
-def get_alert(temperature):
+def get_parametros():
     conn=sqlite3.connect('lab_app.db')
     curs=conn.cursor()
     curs.execute("SELECT valor FROM parametros WHERE parametro = 'LIMITE_MIN_TEMP'");
@@ -144,11 +142,7 @@ def get_alert(temperature):
     curs.execute("SELECT valor FROM parametros WHERE parametro = 'LIMITE_MAX_TEMP'");
     result_max = curs.fetchone()
     conn.close()
-    if (temperature < result_min) or (temperature > result_max):
-        return True
-    else:
-        return False
-
+    return [result_min, result_max]
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)

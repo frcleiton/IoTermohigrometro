@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="/static/css/skeleton.css">
   <!-- Favicon ––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="icon" type="image/png" href="/static/images/favicon.png">
+  <!-- Alerta de temperatura na TV -->
+  <script type="text/javascript" src="static/javascript/alerta_tv.js"></script>
 </head>
   <body>
     <div class="container">
@@ -20,7 +22,7 @@
         <div class="two-third column" style="margin-top: 5%">
             <h2>{{equipname}}</h2>
             <p>{{equipsite}}</p>
-            <h1>Temperatura: {{"{0:0.1f}".format(temp) }}°C</h1>
+            <h1 id="temperatura">Temperatura: {{"{0:0.1f}".format(temp) }}°C</h1>
             <h1>Umidade: {{"{0:0.1f}".format(hum)}}%</h1>  
             <p>Refresh a cada 2 minutos</p>
         </div>   
@@ -29,6 +31,7 @@
       <div class="eleven columns">
         <form id="range_select" action = "/lab_env_db" method="GET">  
           <input type="hidden" class="timezone" name="timezone" />      
+          
 	      <div class="one column">
           <a href="/lab_env_db" style="position:relative;top:15px">Historico</a>
        	</div>
@@ -38,18 +41,13 @@
         </form>          
       </div>
     </div>
-  <input type="hidden" id="atual_temp" name="atual_temp" value="{{temp}}"/>             
-  </body> 
+  <input type="hidden" id="par_min"   name="par_min"  value={{min}}/>
+  <input type="hidden" id="par_max"   name="par_max"  value={{max}}/>
+  <input type="hidden" id="par_temp"  name="par_temp" value={{temp}}/>
+</script>
+</body> 
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.min.js" ></script>
-<script>
-      resultado = {{alerta}}
-      alert('resulta:')
-      if (alerta) {
-        var temp_atual = document.getElementById('atual_temp').value ;
-        alert('Alerta de temperatura: ' + temp_atual);
-      }
-</script>
 <script>
 jQuery( document ).ready(function() {
     timezone = jstz.determine();

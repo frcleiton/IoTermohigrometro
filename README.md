@@ -12,7 +12,7 @@ Tecnologias
 - Cronjob para agendamento das medições
 - Representação em Grafico utilizando a API Google Chart
 - Parametrização dos valores de alerta
-- Alerta por e-mail para temperatura e humidade fora dos parametros.
-- TODO: Alerta na página para temperatura e humidade fora dos parametros.
+- Alerta por e-mail para temperatura e humidade fora dos parametros
+- Alerta na página para temperatura e humidade fora dos parametros
 
 
