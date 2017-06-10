@@ -26,7 +26,6 @@ def lab_temp():
         humidity = random.randint(1,100)
         temperature = random.randint(10,30)
     rmin, rmax = get_parametros()
-    print type(rmin)
     if humidity is not None and temperature is not None:
         return render_template("lab_temp.html",temp=temperature,hum=humidity,equipname=equipamento,equipsite=local,min=rmin[0],max=rmax[0])
     else:
