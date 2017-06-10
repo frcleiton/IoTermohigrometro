@@ -30,7 +30,10 @@ def alerta():
     result_min = curs.fetchone()
     curs.execute("SELECT valor FROM parametros WHERE parametro = 'LIMITE_MAX_TEMP'");
     result_max = curs.fetchone()
-    if (temperature < result_min) or (temperature > result_max):
+    print temperature
+    print result_min[0]
+    print result_max[0]
+    if (temperature < result_min[0]) or (temperature > result_max[0]):
         send_mail(temperature)
 
 def send_mail(temp):
@@ -39,7 +42,7 @@ def send_mail(temp):
     server.ehlo(HOST)
     server.login('cleiton.ferreira@grupocimed.com.br', senha_email)
     mensagem = 'Alerta de temperatura\n\nEquipamento: ' + str(equipamento) \
-        + '\nTemperatura: ' + str(temperature) + ' C' + '\n' + formatdate(localtime=True)
+        + '\nTemperatura: ' + str(round(temperature, 2)) + ' C' + '\n' + formatdate(localtime=True)
     msg = MIMEText(mensagem)
     mail_from = 'cleiton.ferreira@grupocimed.com.br'
     mail_to = 'cleiton.ferreira@grupocimed.com.br'

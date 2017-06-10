@@ -4,6 +4,7 @@ import datetime
 import arrow
 import sqlite3
 import ConfigParser
+from email.Utils import formatdate
 
 app = Flask(__name__)
 config = ConfigParser.RawConfigParser()
@@ -12,6 +13,7 @@ modo_debug  = config.getboolean('DebugSection','debug.value')
 sensor      = config.getboolean('DebugSection','sensor.value')
 equipamento = config.get('EquipSection','equip.name')
 local       = config.get('EquipSection','equip.local')
+local       = local + ' - ' + formatdate(localtime=True)
 app.debug   = modo_debug
 
 @app.route("/")
