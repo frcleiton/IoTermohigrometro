@@ -13,7 +13,6 @@ modo_debug  = config.getboolean('DebugSection','debug.value')
 sensor      = config.getboolean('DebugSection','sensor.value')
 equipamento = config.get('EquipSection','equip.name')
 local       = config.get('EquipSection','equip.local')
-local       = local + ' - ' + formatdate(localtime=True)
 app.debug   = modo_debug
 
 @app.route("/")
