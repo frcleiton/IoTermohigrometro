@@ -45,10 +45,9 @@ def send_mail(temp):
         + '\nTemperatura: ' + str(round(temperature, 2)) + ' C' + '\n' + formatdate(localtime=True)
     msg = MIMEText(mensagem)
     mail_from = 'cleiton.ferreira@grupocimed.com.br'
-    mail_to = 'cleiton.ferreira@grupocimed.com.br'
+    mail_to = ['cleiton.ferreira@grupocimed.com.br','lista-ti-infraestrutura@grupocimed.com.br']
     msg['From'] = mail_from
-    msg['To'] = mail_to
-    #msg['Date'] = formatdate(localtime=True)
+    msg['To'] = ", ".join(mail_to)
     msg['Subject'] = 'Alerta de temperatura'
     server.sendmail( mail_from, mail_to, msg.as_string() )
 
