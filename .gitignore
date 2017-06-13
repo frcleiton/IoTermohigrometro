@@ -3,5 +3,5 @@
 *.db
 *.properties
 *.pyc
-
+*.log
 
