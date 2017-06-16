@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <!-- Basic Page Needs ––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <title>Historico</title>
+    <meta name="description" content="Historico Termohigrometro">
+    <meta name="author" content="Cleiton Ferreira">
+    <!-- Mobile Specific Metas  ––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- FONT ––––––––––––––––––––––––––––––––––– -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <!-- CSS –––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    <link rel="stylesheet" href="/static/css/skeleton.css">
+    <!-- Favicon ––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/png" href="/static/images/favcimed.png">
+  </head>
+  <body>
+    <div class="container">
+    <div class="row">
+	      <form id="date_range" action="/lab_medias" method="GET"> 
+	        <!-- <div class="row">          -->
+	          <div class="three columns">
+	            <label for="from">Data de</label>
+	            <input class="u-full-width" id="datetimepicker1" type="text" value="{{from_date}}" name="from">
+	          </div>
+	        <!-- </div> -->
+	        <!-- <div class="row"> -->
+	          <div class="three columns">
+	            <label for="to">Date até</label>           
+	            <input class="u-full-width" id="datetimepicker2" type="text" value="{{to_date}}" name="to">
+	          </div>   
+	        <!-- </div>          -->
+	        <!-- <div class="row"> -->
+	          <div class="two columns">    
+	            <input class="button-primary" type="submit" value="Enviar" style="position:relative; top: 28px" id="submit_button" />
+	          </div>
+	        <!-- </div> -->
+	      </form> 
+      </div>
+    <div class="row">
+      <div class="eleven column">
+      		<a href="/lab_temp" style="position:relative;top:15px">Real time</a>
+      </div>
+    </div>
+      <div class="row">
+        <div class="one-third column" style="margin-top: 5%">
+          <h3>Relatório mensal</h3>
+            <table class="u-full-width">
+              <thead style="display:block;">
+                <tr>
+                  <th>Data</th>
+                  <th>Média</th>
+                  <th>Mínima</th>
+                  <th>Máxima</th>
+                </tr>
+              </thead>
+              <tbody style="height:450px; overflow-y:scroll; display:block;">
+                {% for reg in medias_date %}
+                <tr>
+                  <td>{{reg[0][2:]}}</td>
+                  <td>{{'%0.2f'|format(reg[1])}}</td>
+                  <td>{{'%0.2f'|format(reg[2])}}</td>
+                  <td>{{'%0.2f'|format(reg[3])}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+ 
+        <div class="two-thirds column" style="margin-top: 5%">
+          <div class="row">
+          <div class="row">
+            <div class="three columns">
+                <div id="chart_medias"></div>
+             </div>
+          </div>
+          </div>
+        </div>
+    </div>
+    </div>
+</body>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.css"/ >
+<script src="/static/javascript/jquery.datetimepicker.full.js"></script>
+
+  <script>
+    jQuery('#datetimepicker1').datetimepicker(
+      {
+	      format: 'Y-m-d',
+        defaultDate:'{{from_date}}'
+      });
+    jQuery('#datetimepicker2').datetimepicker({
+        format: 'Y-m-d',
+        defaultDate:'{{to_date}}'
+      });
+   </script>
+
+ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Data', 'Média', 'Mínimas', 'Máximas'],
+          {% for row in medias_date %}
+            [new Date({{row[0][0:4]}},{{row[0][5:7]}}-1,{{row[0][8:10]}}),{{'%0.2f'|format(row[1])}},{{'%0.2f'|format(row[2])}},{{'%0.2f'|format(row[3])}}],
+          {% endfor %}
+        ]);
+
+       var options = {
+        width: 700,
+        height: 563,
+        title: 'Temperatura Média, Mínima, Máxima',
+        hAxis: { title: "Data", format: 'dd-MMM-yyyy' },
+        vAxis: { title: 'Graus °C' }
+        //colors: ['yellow','blue','red']
+      };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_medias'));
+
+        chart.draw(data, options);
+      }
+    </script>
+
+</html>

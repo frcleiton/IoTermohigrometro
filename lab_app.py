@@ -64,7 +64,7 @@ def lab_env_db():
 def get_records():
 	from_date_str 	= request.args.get('from',time.strftime("%Y-%m-%d 00:00")) #Get the from date value from the URL
 	to_date_str 	= request.args.get('to',time.strftime("%Y-%m-%d %H:%M"))   #Get the to date value from the URL
-	timezone	= request.args.get('timezone','America/Sao_Paulo')
+	timezone	    = request.args.get('timezone','America/Sao_Paulo')
 	range_h_form	= request.args.get('range_h','');  #This will return a string, if field range_h exists in the request
 	range_h_int 	= "nan"  #initialise this variable with not a number
 
@@ -131,9 +131,49 @@ def lab_parametros():
         conn2.close()
         return redirect('/lab_parametros')
 
+@app.route("/lab_medias", methods=['GET'])
+def lab_medias():
+    #recebe a data de/ate para pesquisa via GET
+    if request.args.get('from') is None:
+        #data_de_str	= request.args.get('from',time.strftime("%Y-%m-01 00:00"))
+        data_de_str	= request.args.get('from',time.strftime("%Y-%m-01"))
+    else:
+        #data_de_str	= request.args.get('from',time.strftime("%Y-%m-%d 00:00"))
+        data_de_str	= request.args.get('from',time.strftime("%Y-%m-%d"))
+    #data_ate_str = request.args.get('to',time.strftime("%Y-%m-%d %H:%M"))
+    data_ate_str = request.args.get('to',time.strftime("%Y-%m-%d"))
+    if not validate_date_no_time(data_de_str):
+        #data_de_str 	= time.strftime("%Y-%m-01 00:00")
+        data_de_str 	= time.strftime("%Y-%m-01")
+    if not validate_date_no_time(data_ate_str):
+    	#data_ate_str 	= time.strftime("%Y-%m-%d %H:%M")
+        data_ate_str 	= time.strftime("%Y-%m-%d")
+
+    #conecta no banco e pesquisa as medias por dia
+    conn 	= sqlite3.connect('lab_app.db')
+    curs 	= conn.cursor()
+    qry = ("SELECT strftime('%d%m%Y', rDatetime), avg(temp) as media, min(temp) as minimo, max(temp) as maxima from temperatures "\
+        "WHERE rDateTime BETWEEN ? AND ? "\
+        "group by strftime('%d%m%Y',rDatetime) order by rDatetime")
+    curs.execute(qry, (data_de_str, data_ate_str))
+    medias = curs.fetchall()
+    conn.close()
+    lmedias_date = []
+    for record in medias:
+        lmedias_date.append([arrow.get(record[0], "DDMMYYYY").strftime("%Y-%m-%d"), round(record[1],2), round(record[2],2), round(record[3],2)])
+    lmedia_items = len(lmedias_date)
+    return render_template("lab_medias.html",medias_date=lmedias_date,media_items=lmedia_items,from_date=data_de_str,to_date=data_ate_str)
+
 def validate_date(d):
     try:
         datetime.datetime.strptime(d, '%Y-%m-%d %H:%M')
+        return True
+    except ValueError:
+        return False
+
+def validate_date_no_time(d):
+    try:
+        datetime.datetime.strptime(d, '%Y-%m-%d')
         return True
     except ValueError:
         return False
