@@ -41,7 +41,7 @@ def lab_env_db():
 	time_adjusted_humidities   = []
 
 	for record in temperatures:
-		local_timedate = arrow.get(record[0], "YYYY-MM-DD HH:mm")
+                local_timedate = arrow.get(record[0], "YYYY-MM-DD HH:mm")
 		time_adjusted_temperatures.append([local_timedate.format('YYYY-MM-DD HH:mm'), round(record[2],2)])
 
 	for record in humidities:
@@ -103,9 +103,11 @@ def get_records():
 
 	conn 	= sqlite3.connect('lab_app.db')
 	curs 	= conn.cursor()
-	curs.execute("SELECT * FROM temperatures WHERE rDateTime BETWEEN ? AND ?", (from_date_utc.format('YYYY-MM-DD HH:mm'), to_date_utc.format('YYYY-MM-DD HH:mm')))
+	curs.execute("SELECT * FROM temperatures WHERE (rDateTime BETWEEN ? AND ?) AND temp is not null order by rDateTime",
+                     (from_date_utc.format('YYYY-MM-DD HH:mm'), to_date_utc.format('YYYY-MM-DD HH:mm')))
 	temperatures    = curs.fetchall()
-	curs.execute("SELECT * FROM humidities WHERE rDateTime BETWEEN ? AND ?", (from_date_utc.format('YYYY-MM-DD HH:mm'), to_date_utc.format('YYYY-MM-DD HH:mm')))
+	curs.execute("SELECT * FROM humidities WHERE (rDateTime BETWEEN ? AND ?) AND temp is not null order by rDateTime",
+                     (from_date_utc.format('YYYY-MM-DD HH:mm'), to_date_utc.format('YYYY-MM-DD HH:mm')))
 	humidities 	= curs.fetchall()
 	conn.close()
 	return [temperatures, humidities, timezone, from_date_str, to_date_str]
@@ -135,25 +137,20 @@ def lab_parametros():
 def lab_medias():
     #recebe a data de/ate para pesquisa via GET
     if request.args.get('from') is None:
-        #data_de_str	= request.args.get('from',time.strftime("%Y-%m-01 00:00"))
         data_de_str	= request.args.get('from',time.strftime("%Y-%m-01"))
     else:
-        #data_de_str	= request.args.get('from',time.strftime("%Y-%m-%d 00:00"))
         data_de_str	= request.args.get('from',time.strftime("%Y-%m-%d"))
-    #data_ate_str = request.args.get('to',time.strftime("%Y-%m-%d %H:%M"))
     data_ate_str = request.args.get('to',time.strftime("%Y-%m-%d"))
     if not validate_date_no_time(data_de_str):
-        #data_de_str 	= time.strftime("%Y-%m-01 00:00")
         data_de_str 	= time.strftime("%Y-%m-01")
     if not validate_date_no_time(data_ate_str):
-    	#data_ate_str 	= time.strftime("%Y-%m-%d %H:%M")
-        data_ate_str 	= time.strftime("%Y-%m-%d")
+    	data_ate_str 	= time.strftime("%Y-%m-%d")
 
     #conecta no banco e pesquisa as medias por dia
     conn 	= sqlite3.connect('lab_app.db')
     curs 	= conn.cursor()
     qry = ("SELECT strftime('%d%m%Y', rDatetime), avg(temp) as media, min(temp) as minimo, max(temp) as maxima from temperatures "\
-        "WHERE rDateTime BETWEEN ? AND ? "\
+        "WHERE rDateTime > ? AND rDatetime <= ? "\
         "group by strftime('%d%m%Y',rDatetime) order by rDatetime")
     curs.execute(qry, (data_de_str, data_ate_str))
     medias = curs.fetchall()
